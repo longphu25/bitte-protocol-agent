@@ -57,6 +57,7 @@ pnpm run dev
 ```
 
 This command will:
+
 - Start your Next.js application on `http://localhost:3000`
 - Launch `make-agent` development mode
 - Prompt you to sign a message in your Bitte wallet to authenticate
@@ -78,40 +79,47 @@ pnpm run build:deploy
 The boilerplate includes six fully functional tools that demonstrate different agent capabilities:
 
 ### 1. **Blockchain Information** (`/api/tools/get-blockchains`)
+
 - **Purpose**: Returns a randomized list of 3 blockchain networks
 - **Implementation**: Static list with random selection
 - **Use Case**: Demonstrating simple data retrieval and randomization
 
 ### 2. **NEAR Transaction Generator** (`/api/tools/create-near-transaction`)
+
 - **Purpose**: Creates NEAR transaction payloads for token transfers
 - **Parameters**: `receiverId` (NEAR account), `amount` (NEAR tokens)
 - **Implementation**: Converts amounts to yoctoNEAR (10^24) for precision
 - **Integration**: Works with Bitte's `generate-transaction` tool for wallet execution
 
 ### 3. **EVM Transaction Generator** (`/api/tools/create-evm-transaction`)
+
 - **Purpose**: Creates EVM transaction payloads for ETH transfers
 - **Parameters**: `to` (recipient address), `amount` (ETH amount)
 - **Implementation**: Uses viem for proper ETH amount parsing
 - **Integration**: Works with Bitte's `generate-evm-tx` tool for wallet execution
 
 ### 4. **Ethereum Message Signing** (`/api/tools/eth-sign-request`)
+
 - **Purpose**: Creates various Ethereum signature requests
 - **Methods**: `eth_sign`, `personal_sign`, `eth_signTypedData`, `eth_signTypedData_v4`
 - **Parameters**: `evmAddress`, `chainId`, `method`, `message`
 - **Implementation**: Supports both simple messages and typed data structures
 
 ### 5. **User Information** (`/api/tools/get-user`)
+
 - **Purpose**: Returns user's NEAR account ID and EVM address
 - **Context-Aware**: Automatically populated by Bitte's context system
 - **Use Case**: Accessing authenticated user information within agent flows
 
 ### 6. **Twitter Integration** (`/api/tools/twitter`)
+
 - **Purpose**: Generates Twitter share intent URLs
 - **Parameters**: `text` (required), `url`, `hashtags`, `via`
 - **Implementation**: Proper URL encoding for all parameters
 - **Use Case**: Social sharing and engagement features
 
 ### 7. **Coin Flip** (`/api/tools/coinflip`)
+
 - **Purpose**: Simple randomization tool returning "heads" or "tails"
 - **Implementation**: Cryptographically random using Math.random()
 - **Use Case**: Demonstrating simple random functionality
@@ -121,6 +129,7 @@ The boilerplate includes six fully functional tools that demonstrate different a
 The agent is configured through the AI plugin manifest at `/api/ai-plugin/route.ts`. This endpoint returns an OpenAPI specification that defines:
 
 ### Agent Metadata
+
 ```typescript
 {
   name: "Blockchain Assistant",
@@ -145,13 +154,13 @@ The agent is configured through the AI plugin manifest at `/api/ai-plugin/route.
 
 ## 📝 Environment Variables
 
-| Variable | Required | Description | Example |
-|----------|----------|-------------|---------|
-| `BITTE_API_KEY` | ✅ | Your Bitte API key from [key.bitte.ai](https://key.bitte.ai) | `bitte_key_...` |
-| `ACCOUNT_ID` | ✅ | Your blockchain account ID | `walletaddresss` |
-| `NEXT_PUBLIC_HOST` | ❌ | Development host | `localhost` |
-| `PORT` | ❌ | Development port | `3000` |
-| `NEXT_PUBLIC_BASE_URL` | ❌ | Base URL for assets | `https://yourdomain.com` |
+| Variable               | Required | Description                                                  | Example                  |
+| ---------------------- | -------- | ------------------------------------------------------------ | ------------------------ |
+| `BITTE_API_KEY`        | ✅       | Your Bitte API key from [key.bitte.ai](https://key.bitte.ai) | `bitte_key_...`          |
+| `ACCOUNT_ID`           | ✅       | Your blockchain account ID                                   | `walletaddresss`         |
+| `NEXT_PUBLIC_HOST`     | ❌       | Development host                                             | `localhost`              |
+| `PORT`                 | ❌       | Development port                                             | `3000`                   |
+| `NEXT_PUBLIC_BASE_URL` | ❌       | Base URL for assets                                          | `https://yourdomain.com` |
 
 ## 🛠️ Development Scripts
 
@@ -198,15 +207,15 @@ To add your own tools to the agent:
 
 ```typescript
 // src/app/api/tools/my-tool/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const param = searchParams.get('param');
+  const param = searchParams.get("param");
 
   // Your tool logic here
 
-  return NextResponse.json({ result: 'success' });
+  return NextResponse.json({ result: "success" });
 }
 ```
 
