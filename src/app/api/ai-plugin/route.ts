@@ -27,26 +27,27 @@ export async function GET() {
       // The account id of the user who created the agent found in .env file
       "account-id": ACCOUNT_ID,
       // The email of the user who created the agent
-      email: "youremail@gmail.com",
-      assistant: {
-        name: "Blockchain Assistant",
-        description:
-          "An assistant that answers with blockchain information, tells the user's account id, interacts with twitter, creates transaction payloads for NEAR and EVM blockchains, and flips coins.",
-        instructions:
-          "You create near and evm transactions, give blockchain information, tell the user's account id, interact with twitter and flip coins. For blockchain transactions, first generate a transaction payload using the appropriate endpoint (/api/tools/create-near-transaction or /api/tools/create-evm-transaction), then explicitly use the 'generate-transaction' tool for NEAR or 'generate-evm-tx' tool for EVM to actually send the transaction on the client side. For EVM transactions, make sure to provide the 'to' address (recipient) and 'amount' (in ETH) parameters when calling /api/tools/create-evm-transaction. Simply getting the payload from the endpoints is not enough - the corresponding tool must be used to execute the transaction.",
-        tools: [
-          { type: "generate-transaction" },
-          { type: "generate-evm-tx" },
-          { type: "sign-message" },
-        ],
+      email: "longphu257@gmail.com",
+        assistant: {
+          name: "Pet-Agent: Multichain Pet NFT Assistant",
+          description:
+            "A gamified pet management system for minting unique Pet NFTs and leveling them up through task completion on Multichain blockchain",
+          instructions:
+            "You are a pet management assistant that helps users mint unique Pet NFTs and level them up through task-based gameplay on Multichain blockchain. You can create near, evm, and sui transactions, provide blockchain information, manage user accounts, interact with twitter, check SUI balances, flip coins, and handle all Pet NFT operations. For blockchain transactions, first generate a transaction payload using the appropriate endpoint (/api/tools/create-near-transaction, /api/tools/create-evm-transaction, or /api/tools/sui/send-sui), then explicitly use the corresponding tool ('generate-transaction' for NEAR, 'generate-evm-tx' for EVM, or the SUI transaction bytes for SUI) to execute the transaction. For Pet NFTs, you can mint new pets using /api/tools/pet/mint-nft (returns SUI transaction bytes), list available tasks, check task progress, and monitor pet levels and stats. The mint-nft endpoint creates a transaction that must be executed client-side using the 'generate-sui-tx' tool. Guide users through the gamified pet experience by explaining task requirements, pet evolution mechanics, and reward systems.",
+          tools: [
+            { type: "generate-transaction" },
+            { type: "generate-evm-tx" },
+            { type: "sign-message" },
+            { type: 'generate-sui-tx' },
+          ],
         // Thumbnail image for your agent
         image: `${
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
         }/bitte.svg`,
         // The repo url for your agent https://github.com/your-username/your-agent-repo
-        repo: "https://github.com/BitteProtocol/agent-next-boilerplate",
+        repo: "https://github.com/longphu25/bitte-protocol-agent",
         // The categories your agent supports ["DeFi", "DAO", "NFT", "Social"]
-        categories: ["DeFi", "DAO", "Social"],
+        categories: ["DeFi", "DAO", "NFT", "Social"],
         // The chains your agent supports 1 = mainnet, 8453 = base
         chainIds: [1, 8453],
       },
@@ -485,17 +486,19 @@ export async function GET() {
           },
         },
       },
-      "/api/tools/sui": {
+      "/api/tools/sui/testnet/get-balance": {
         get: {
-          summary: "SUI Tool Example",
-          description: "Description of what your tool does",
-          operationId: "sui-tool",
+          summary: "SUI Tool - Testnet Get Balance",
+          description:
+            "Tool to get the balance of a SUI address on the testnet",
+          operationId: "sui-testnet-get-balance",
           parameters: [
             {
               name: "param",
               in: "query",
               required: true,
               schema: { type: "string" },
+              description: "The SUI address to check balance for (must start with 0x)",
             },
           ],
           responses: {
@@ -507,6 +510,88 @@ export async function GET() {
                     type: "object",
                     properties: {
                       result: { type: "string" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/api/tools/sui/send-sui": {
+        post: {
+          summary: "Send a Sui tokens",
+          description:
+            "Accept the args and return a valid sui transaction in bytes to send tokens to an address",
+          operationId: "generateSuiTx",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    senderAddress: {
+                      type: "string",
+                      description: "Address sending SUI",
+                    },
+                    recipientAddress: {
+                      type: "string",
+                      description: "Address receiving SUI",
+                    },
+                    amountInSui: {
+                      type: "number",
+                      description: "Amount of SUI to send",
+                    },
+                    network: {
+                      type: "string",
+                      enum: ["mainnet", "testnet", "devnet"],
+                      default: "testnet",
+                      description: "Which Sui network to use",
+                    },
+                  },
+                  required: [
+                    "senderAddress",
+                    "recipientAddress",
+                    "amountInSui",
+                  ],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description: "Successful response",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: {
+                        type: "boolean",
+                        description:
+                          "Whether the transaction was successfully built or validated",
+                      },
+                      data: {
+                        type: "object",
+                        description: "Additional result data",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            "500": {
+              description: "Error response",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      error: {
+                        type: "string",
+                        description: "Error message",
+                      },
                     },
                   },
                 },
